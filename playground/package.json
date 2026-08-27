@@ -1,27 +1,17 @@
 {
   "name": "mellow-learners-playground",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "vite --configLoader runner --port=3000 --host=0.0.0.0",
-    "build": "vite --configLoader runner build",
-    "preview": "vite --configLoader runner preview --host=0.0.0.0",
-    "lint": "tsc --noEmit"
-  },
+  "engines": {"node": ">=22.13.0"},
+  "scripts": {"dev": "vinext dev", "build": "vinext build", "start": "vinext start", "lint": "tsc --noEmit"},
   "dependencies": {
-    "@openai/sites-vite-plugin": "latest",
-    "@vitejs/plugin-react": "^5.0.4",
-    "lucide-react": "^0.546.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.13.2",
-    "vite": "^6.2.0"
+    "lucide-react": "^0.546.0", "next": "16.2.6", "react": "19.2.6", "react-dom": "19.2.6", "react-router-dom": "^7.13.2"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "typescript": "~5.8.2"
+    "@cloudflare/vite-plugin": "1.37.1", "@cloudflare/workers-types": "4.20260515.1", "@openai/sites-vite-plugin": "^0.2.0",
+    "@types/node": "22.19.19", "@types/react": "19.2.14", "@types/react-dom": "19.2.3", "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26", "react-server-dom-webpack": "19.2.6", "typescript": "5.9.3", "vinext": "1.0.0-beta.3", "vite": "8.0.13", "wrangler": "4.92.0"
   }
 }
 
