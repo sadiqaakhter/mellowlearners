@@ -32,6 +32,11 @@ function BookRedirect() {
   return <Navigate to={`/lms/book/${bookId}/story`} replace />;
 }
 
+function BookOneMissionRedirect() {
+  const { missionId = 'gesture-ai' } = useParams();
+  return <Navigate to={`/lms/book/b1/missions?mission=${missionId}`} replace />;
+}
+
 function AppContent() {
   const location = useLocation();
   const isLMS = location.pathname.startsWith('/lms');
@@ -51,6 +56,14 @@ function AppContent() {
           <Route path="/lms/learner" element={<LearnerDashboard />} />
           <Route path="/lms/book/:bookId" element={<BookRedirect />} />
           <Route path="/lms/book/:bookId/:stage" element={<BookWorkspace />} />
+          <Route path="/book1" element={<Navigate to="/lms/book/b1/story" replace />} />
+          <Route path="/book1/timeline" element={<Navigate to="/lms/book/b1/explore" replace />} />
+          <Route path="/book1/challenge" element={<Navigate to="/lms/book/b1/challenge" replace />} />
+          <Route path="/book1/lander-lab" element={<Navigate to="/lms/book/b1/design" replace />} />
+          <Route path="/book1/ai-detective" element={<Navigate to="/lms/book/b1/missions?activity=ai" replace />} />
+          <Route path="/book1/careers" element={<Navigate to="/lms/book/b1/missions?activity=careers" replace />} />
+          <Route path="/book1/reflection" element={<Navigate to="/lms/book/b1/reflection" replace />} />
+          <Route path="/book1/mission/:missionId" element={<BookOneMissionRedirect />} />
           <Route path="/lms/teacher" element={<div className="p-20 text-center">Teacher Dashboard (Coming Soon)</div>} />
           <Route path="/lms/parent" element={<div className="p-20 text-center">Parent Dashboard (Coming Soon)</div>} />
         </Routes>
