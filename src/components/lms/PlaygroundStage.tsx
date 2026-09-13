@@ -1,32 +1,15 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { ExternalLink, Lightbulb, Send, Sparkles, Trophy } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import type { BookModule, BookStageId } from '../../data/bookModules';
+import { StoryPlay, WonderPlay, TimelinePlay, ChallengePlay } from './Book1Play';
+
+import { useProfileSavedState } from './LearnerProfiles';
 
 type Props = { book: BookModule; stage: BookStageId };
 type Feedback = { tone: 'idle' | 'success' | 'try'; text: string };
 
-const timeline = [
-  ['1969', 'Apollo 11', 'Humans first landed on the Moon and returned safely.'],
-  ['1972', 'Apollo 17', 'Longer surface science helped astronauts collect more evidence.'],
-  ['2008', 'Chandrayaan-1', 'The mission helped confirm water molecules on the Moon.'],
-  ['2019', "Chang'e 4", 'The first soft landing on the far side opened a new view.'],
-  ['2023', 'Chandrayaan-3', 'India soft-landed near the lunar south polar region.'],
-] as const;
-
-const landingCases = [
-  { name: 'Giffy One', speed: 1.7, tilt: 4, legs: 4, answer: 'go' },
-  { name: 'Crater Hopper', speed: 4.8, tilt: 7, legs: 4, answer: 'no-go' },
-  { name: 'Moon Wobble', speed: 2.1, tilt: 19, legs: 3, answer: 'no-go' },
-] as const;
-
-function useStoredState<T>(key: string, initial: T) {
-  const [value, setValue] = useState<T>(() => {
-    try { return JSON.parse(localStorage.getItem(key) || '') as T; } catch { return initial; }
-  });
-  useEffect(() => localStorage.setItem(key, JSON.stringify(value)), [key, value]);
-  return [value, setValue] as const;
-}
+const useStoredState = useProfileSavedState;
 
 function useProgress(bookId: string) {
   const [done, setDone] = useStoredState<string[]>(`mellow-${bookId}-progress`, []);
@@ -67,42 +50,6 @@ function MellunaCoach({ feedback, hint, guide }: { feedback: Feedback; hint: str
 
 function Submit({ onClick, label = 'Submit to Melluna', disabled = false }: { onClick: () => void; label?: string; disabled?: boolean }) {
   return <button type="button" onClick={onClick} disabled={disabled} className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#7651a9] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#7651a9]/20 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"><Send size={17} /> {label}</button>;
-}
-
-function WrittenStage({ bookId, stage, prompts, complete, isDone }: { bookId: string; stage: 'story' | 'wonder'; prompts: string[]; complete: () => void; isDone: boolean }) {
-  const [answers, setAnswers] = useStoredState<string[]>(`mellow-${bookId}-${stage}-answers`, prompts.map(() => ''));
-  const [feedback, setFeedback] = useState<Feedback>({ tone: 'idle', text: stage === 'story' ? 'Read the story pages, then explain the problem in your own words.' : 'There can be more than one good question. I will check that your thinking is clear and specific.' });
-  const submit = () => {
-    const filled = answers.every((answer) => answer.trim().length >= 12);
-    if (!filled) return setFeedback({ tone: 'try', text: 'Not finished yet. Add one clear sentence to every answer box.' });
-    if (stage === 'story' && !answers.join(' ').toLowerCase().match(/moon|air|parachute|landing/)) return setFeedback({ tone: 'try', text: 'You have a thoughtful start. Connect one answer to the Moon landing problem.' });
-    complete(); setFeedback({ tone: 'success', text: 'Strong thinking. You used your own words and connected them to the mission.' });
-  };
-  return <Card><p className="text-xs font-black uppercase tracking-widest text-[#7651a9]">Your mission notes</p><h2 className="mt-2 text-2xl font-black text-slate-950">{stage === 'story' ? 'Spot the story problem' : 'Build your question board'}</h2><div className="mt-5 space-y-4">{prompts.map((prompt, index) => <label key={prompt} className="block rounded-2xl border border-slate-200 p-4"><span className="text-sm font-black text-slate-800">{prompt}</span><textarea value={answers[index] || ''} onChange={(event) => setAnswers((all) => all.map((answer, answerIndex) => answerIndex === index ? event.target.value : answer))} className="mt-3 min-h-24 w-full rounded-2xl bg-slate-50 p-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-[#bba4d2]" placeholder="Write what you notice…" /></label>)}</div><Submit onClick={submit} label={isDone ? 'Check my answers again' : undefined} /><MellunaCoach feedback={feedback} hint={stage === 'story' ? 'Ask: what works on Earth but will not work on the Moon?' : 'Useful questions often begin with why, how, what if, or how might we test…'} guide={stage === 'story' ? ['Look at the problem Giffy faces.', 'Find the Moon fact that causes it.', 'Explain the connection in your own words.'] : ['Write one science question.', 'Write one design question.', 'Choose the question you would test first and explain why.']} /></Card>;
-}
-
-function TimelineStage({ complete, isDone }: { complete: () => void; isDone: boolean }) {
-  const [selected, setSelected] = useState(0);
-  const [answer, setAnswer] = useState('');
-  const [feedback, setFeedback] = useState<Feedback>({ tone: 'idle', text: 'Explore the timeline first. Then answer the mission check.' });
-  const event = timeline[selected];
-  const submit = () => answer === 'Chandrayaan-1' ? (complete(), setFeedback({ tone: 'success', text: 'Correct! Finding water changed what future Moon bases might be able to use.' })) : setFeedback({ tone: 'try', text: 'Try again. Look for the mission whose evidence mentions water molecules.' });
-  return <Card><p className="text-xs font-black uppercase tracking-widest text-[#7651a9]">Explore and solve</p><h2 className="mt-2 text-2xl font-black text-slate-950">Moon mission timeline</h2><div className="mt-5 grid gap-4 md:grid-cols-[0.8fr_1.2fr]"><div className="space-y-2">{timeline.map((item, index) => <button key={item[1]} type="button" onClick={() => setSelected(index)} className={`flex w-full justify-between rounded-2xl border p-3 text-left font-black ${selected === index ? 'border-[#7651a9] bg-[#f3eef8] text-[#513773]' : 'border-slate-200 text-slate-600'}`}><span>{item[1]}</span><span>{item[0]}</span></button>)}</div><div className="rounded-3xl bg-[#3e2c5f] p-6 text-white"><p className="text-4xl font-black text-[#d9c6ea]">{event[0]}</p><h3 className="mt-2 text-2xl font-black">{event[1]}</h3><p className="mt-3 leading-relaxed text-white/80">{event[2]}</p></div></div><fieldset className="mt-5 rounded-3xl border border-slate-200 p-5"><legend className="px-2 text-sm font-black text-slate-900">Which mission helped confirm water molecules on the Moon?</legend><div className="mt-3 grid gap-2 sm:grid-cols-3">{['Apollo 11', 'Chandrayaan-1', "Chang'e 4"].map((option) => <button key={option} type="button" onClick={() => setAnswer(option)} className={`rounded-2xl border p-3 text-sm font-black ${answer === option ? 'border-[#7651a9] bg-[#f3eef8]' : 'border-slate-200'}`}>{option}</button>)}</div></fieldset><Submit onClick={submit} disabled={!answer} label={isDone ? 'Check again' : undefined} /><MellunaCoach feedback={feedback} hint="Open the 2008 mission card and look for a clue about a resource astronauts may need." guide={['Select each mission in date order.', 'Write: mission → discovery → why it matters.', 'Use that evidence to answer the question.']} /></Card>;
-}
-
-function ChallengeStage({ complete }: { complete: () => void }) {
-  const [caseIndex, setCaseIndex] = useState(0);
-  const [choice, setChoice] = useState('');
-  const [correctCount, setCorrectCount] = useState(0);
-  const [feedback, setFeedback] = useState<Feedback>({ tone: 'idle', text: 'Compare every reading with the safe-flight rules before making your call.' });
-  const current = landingCases[caseIndex];
-  const submit = () => {
-    if (choice !== current.answer) return setFeedback({ tone: 'try', text: 'That call is not safe yet. Check speed, tilt, and landing legs one at a time.' });
-    const nextCount = correctCount + 1; setCorrectCount(nextCount);
-    if (caseIndex === landingCases.length - 1) { complete(); return setFeedback({ tone: 'success', text: 'Mission complete: all three calls match the data.' }); }
-    setFeedback({ tone: 'success', text: 'Correct call. New case unlocked!' }); setCaseIndex((index) => index + 1); setChoice('');
-  };
-  return <Card><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-widest text-[#7651a9]">Solvable data challenge</p><h2 className="mt-2 text-2xl font-black text-slate-950">GO or NO-GO?</h2></div><span className="rounded-full bg-slate-100 px-3 py-2 text-xs font-black">{caseIndex + 1} / {landingCases.length}</span></div><div className="mt-5 grid grid-cols-3 gap-3">{[['Speed', `${current.speed} m/s`], ['Tilt', `${current.tilt}°`], ['Working legs', current.legs]].map(([label, value]) => <div key={label} className="rounded-2xl bg-slate-50 p-4 text-center"><p className="text-xs font-bold text-slate-400">{label}</p><p className="mt-1 text-xl font-black">{value}</p></div>)}</div><div className="mt-4 rounded-2xl bg-[#f5f1f9] p-4 text-sm font-bold text-slate-700">Safe when: speed ≤ 2.5 m/s · tilt ≤ 12° · four working legs</div><div className="mt-4 grid grid-cols-2 gap-3">{['go', 'no-go'].map((option) => <button key={option} type="button" onClick={() => setChoice(option)} className={`rounded-2xl border-2 p-4 text-lg font-black ${choice === option ? 'border-[#7651a9] bg-[#f3eef8]' : 'border-slate-200'}`}>{option.toUpperCase()}</button>)}</div><Submit onClick={submit} disabled={!choice} label="Submit flight call" /><MellunaCoach feedback={feedback} hint="A mission is NO-GO if even one safety rule fails." guide={['Draw three columns: speed, tilt, legs.', 'Mark each reading safe or unsafe.', 'GO only when all three marks are safe.']} /></Card>;
 }
 
 function DesignStage({ bookId, complete, isDone }: { bookId: string; complete: () => void; isDone: boolean }) {
@@ -154,10 +101,10 @@ export default function PlaygroundStage({ book, stage }: Props) {
   const progress = useProgress(book.id);
   const complete = () => progress.complete(stage);
   const isDone = progress.done.includes(stage);
-  const stageData = book.stages.find((item) => item.id === stage) || book.stages[0];
-  if (stage === 'story' || stage === 'wonder') return <WrittenStage bookId={book.id} stage={stage} prompts={stageData.prompts} complete={complete} isDone={isDone} />;
-  if (stage === 'explore') return <TimelineStage complete={complete} isDone={isDone} />;
-  if (stage === 'challenge') return <ChallengeStage complete={complete} />;
+  if (stage === 'story') return <StoryPlay book={book} complete={complete} />;
+  if (stage === 'wonder') return <WonderPlay bookId={book.id} complete={complete} />;
+  if (stage === 'explore') return <TimelinePlay bookId={book.id} complete={complete} />;
+  if (stage === 'challenge') return <ChallengePlay bookId={book.id} complete={complete} />;
   if (stage === 'design') return <DesignStage bookId={book.id} complete={complete} isDone={isDone} />;
   if (stage === 'missions') return <MissionStage book={book} complete={complete} isDone={isDone} />;
   if (stage === 'test') return <TestStage bookId={book.id} complete={complete} isDone={isDone} />;

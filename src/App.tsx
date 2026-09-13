@@ -11,6 +11,8 @@ import LMSLogin from './pages/LMSLogin';
 import LearnerDashboard from './pages/LearnerDashboard';
 import BookWorkspace from './pages/BookWorkspace';
 import Founder from './pages/Founder';
+import ProfileLogin from './pages/ProfileLogin';
+import { ProfileProvider, RequireProfile, SaveNotice } from './components/lms/LearnerProfiles';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -53,9 +55,12 @@ function AppContent() {
           <Route path="/events" element={<Events />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/lms" element={<LMSLogin />} />
+          <Route path="/lms/login" element={<ProfileLogin />} />
+          <Route element={<RequireProfile />}>
           <Route path="/lms/learner" element={<LearnerDashboard />} />
           <Route path="/lms/book/:bookId" element={<BookRedirect />} />
           <Route path="/lms/book/:bookId/:stage" element={<BookWorkspace />} />
+          </Route>
           <Route path="/book1" element={<Navigate to="/lms/book/b1/story" replace />} />
           <Route path="/book1/timeline" element={<Navigate to="/lms/book/b1/explore" replace />} />
           <Route path="/book1/challenge" element={<Navigate to="/lms/book/b1/challenge" replace />} />
@@ -76,8 +81,11 @@ function AppContent() {
 export default function App() {
   return (
     <Router>
+      <ProfileProvider>
+      <SaveNotice/>
       <ScrollToTop />
       <AppContent />
+      </ProfileProvider>
     </Router>
   );
 }

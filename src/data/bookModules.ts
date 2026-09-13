@@ -30,6 +30,7 @@ export type BookMission = {
 };
 
 export type BookModule = {
+  storyVideoId?: string;
   id: string;
   number: number;
   characterId: string;
@@ -54,8 +55,8 @@ export const bookModules: Record<string, BookModule> = {
         id: 'story',
         label: 'Story',
         shortLabel: 'Story',
-        helper: 'Meet Giffy and discover why landing on the Moon is not as easy as buying a rocket ticket.',
-        objective: 'Understand the story problem: the Moon has no air, so parachutes will not work.',
+        helper: 'Meet Giffy, follow her Moon dream, and help her solve the landing problem.',
+        objective: 'Giffy’s Moon Adventure',
         pages: ['assets/book1/page-02.jpg', 'assets/book1/page-03.jpg', 'assets/book1/page-04.jpg', 'assets/book1/page-05.jpg', 'assets/book1/page-06.jpg'],
         prompts: ['What problem does Giffy notice?', 'Why is the Moon different from Earth?', 'What does Melluna help Giffy understand?'],
       },
@@ -63,8 +64,8 @@ export const bookModules: Record<string, BookModule> = {
         id: 'wonder',
         label: 'Think & Wonder',
         shortLabel: 'Wonder',
-        helper: 'Collect questions before choosing a solution.',
-        objective: 'Ask useful science and engineering questions before building.',
+        helper: 'Tap the book’s question bubbles, discover answers, and ask Melluna what else you wonder.',
+        objective: 'Let your curiosity take the lead.',
         pages: ['assets/book1/page-07.jpg'],
         prompts: ['What do you already know about rockets?', 'What do you need to find out?', 'What would you test first?'],
       },
@@ -72,8 +73,8 @@ export const bookModules: Record<string, BookModule> = {
         id: 'explore',
         label: 'Explore',
         shortLabel: 'Explore',
-        helper: 'Travel through key Moon missions and notice how landing technology improved.',
-        objective: 'Connect mission history to the engineering choices used today.',
+        helper: 'Explore real NASA images. Then rebuild the timeline with lander cards.',
+        objective: 'Explore real landers.',
         pages: ['assets/book1/page-08.jpg'],
         prompts: ['Which mission changed Moon exploration?', 'What improved over time?', 'What should the next mission learn from the past?'],
       },
@@ -81,8 +82,8 @@ export const bookModules: Record<string, BookModule> = {
         id: 'challenge',
         label: 'GO / NO-GO Challenge',
         shortLabel: 'Challenge',
-        helper: 'Read landing data and make a flight-controller decision.',
-        objective: 'Use evidence—not guessing—to predict safe landing or crash risk.',
+        helper: 'Solve the data sheet, make your flight call, then take the controls in the landing game.',
+        objective: 'GO or NO-GO? You decide.',
         pages: ['assets/book1/page-08.jpg'],
         prompts: ['Which readings show danger?', 'What makes a landing stable?', 'Which evidence supports your call?'],
       },

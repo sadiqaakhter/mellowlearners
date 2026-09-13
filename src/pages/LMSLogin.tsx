@@ -55,7 +55,7 @@ export default function LMSLogin() {
             <div>
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-blue/15 bg-white px-4 py-2 text-xs font-black uppercase tracking-widest text-brand-blue">
                 <Sparkles size={16} />
-                learn.mellowlearners.net
+                Mellow Learners Playground
               </div>
               <h1 className="mb-6 text-5xl font-black leading-[0.95] tracking-tight text-slate-950 lg:text-7xl">
                 A mission control board for young STEM builders.
@@ -65,7 +65,7 @@ export default function LMSLogin() {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link to="/lms/learner" className="btn-primary inline-flex items-center justify-center gap-2">
-                  Start Free Preview <ArrowRight size={20} />
+                  Choose your explorer <ArrowRight size={20} />
                 </Link>
                 <Link to="/lms/book/b1/story" className="btn-secondary inline-flex items-center justify-center gap-2 bg-white">
                   Open Book 1 Workspace
@@ -73,7 +73,7 @@ export default function LMSLogin() {
               </div>
               <div className="mt-6 flex items-start gap-3 rounded-2xl border border-brand-green/20 bg-white p-4 text-sm font-bold text-slate-700">
                 <ShieldCheck className="shrink-0 text-brand-green" size={22} />
-                No student login is needed for this public preview. Full accounts, submissions, and teacher tools can be added after the concept is validated.
+                Choose a sample explorer or make a nickname profile. Your progress stays in this browser on this device. These demo profiles do not have passwords.
               </div>
             </div>
 
